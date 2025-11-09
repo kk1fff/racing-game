@@ -1,5 +1,6 @@
 import type { FormEvent } from 'react'
 import { useCallback } from 'react'
+import { GAME_CONFIG } from '../config'
 
 interface SetupScreenProps {
   minutesInput: string
@@ -42,8 +43,11 @@ export function SetupScreen({
           <div className="input-row">
             <input
               id="duration"
+              type="number"
               inputMode="decimal"
-              pattern="^\\d*(?:\\.\\d+)?$"
+              min={GAME_CONFIG.minMinutes}
+              max={GAME_CONFIG.maxMinutes}
+              step="0.1"
               value={minutesInput}
               onChange={(event) => onMinutesChange(event.target.value)}
               className="minutes-input"
