@@ -305,7 +305,7 @@ button {
   position: absolute;
   bottom: 18%;
   left: 5%;
-  transform: translateX(calc((100% - 160px) * var(--progress, 0)));
+  transform: translateX(0);
   transition: transform 0.15s ease-out;
 }
 

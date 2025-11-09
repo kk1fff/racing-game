@@ -18,5 +18,6 @@
 
 ## Testing & Tooling
 - Before committing, run `npm run build` to confirm type safety and successful bundling.
+- Exercise UI interactions with Vitest (`npm run test` for a single pass or `npm run test:watch` while iterating) so regressions are caught early.
 - Add automated tests when implementing complex logic or regressions are likely.
 - Document feature updates in `CHANGELOG.md`, expand `SPEC.md` for new behaviour, and summarise user-facing changes in `README.md`.
