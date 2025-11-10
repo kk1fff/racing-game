@@ -229,17 +229,32 @@ button {
   flex-direction: column;
   align-items: stretch;
   gap: 1.5rem;
+  justify-content: space-between;
+  width: min(1200px, 100%);
+  min-height: min(900px, 100vh);
+}
+
+@supports (height: 100dvh) {
+  .race-screen {
+    min-height: min(900px, 100dvh);
+  }
 }
 
 .track-area {
   position: relative;
   flex: 1;
-  min-height: 320px;
+  min-height: clamp(320px, 60vh, 640px);
   background: linear-gradient(180deg, #9bdcff 0%, #eef6ff 55%, #74c365 56%, #4f924d 100%);
   border-radius: 32px;
   padding: clamp(1rem, 2vw, 2rem);
   box-shadow: inset 0 16px 0 rgba(255, 255, 255, 0.4);
   overflow: hidden;
+}
+
+@supports (height: 100dvh) {
+  .track-area {
+    min-height: clamp(320px, 60dvh, 640px);
+  }
 }
 
 .sky {
@@ -275,8 +290,8 @@ button {
 
 .track {
   position: relative;
-  height: 60%;
-  margin-top: 25%;
+  height: clamp(220px, 60%, 460px);
+  margin-top: clamp(1.5rem, 6vh, 25%);
   border-radius: 28px;
   background: repeating-linear-gradient(
       90deg,

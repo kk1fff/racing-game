@@ -1,6 +1,19 @@
+import type { CSSProperties } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Hud } from './Hud'
 import { RunnerSprite } from './RunnerSprite'
+import { clamp } from '../utils/time'
+
+const MAX_SCENE_HEIGHT = 900
+const MIN_SCENE_HEIGHT = 320
+
+function resolveViewportHeight() {
+  if (typeof window === 'undefined') {
+    return MAX_SCENE_HEIGHT
+  }
+  const { innerHeight } = window
+  return Math.max(MIN_SCENE_HEIGHT, innerHeight || MAX_SCENE_HEIGHT)
+}
 
 interface RaceScreenProps {
   durationMs: number
@@ -15,6 +28,7 @@ export function RaceScreen({ durationMs, elapsedMs, progress, onDone, disabled }
   const runnerRef = useRef<HTMLDivElement>(null)
   const finishRef = useRef<HTMLDivElement>(null)
   const [maxTravelPx, setMaxTravelPx] = useState(0)
+  const [viewportHeight, setViewportHeight] = useState(() => resolveViewportHeight())
 
   const updateRunnerBounds = useCallback(() => {
     const trackWidth = trackRef.current?.offsetWidth ?? 0
@@ -49,16 +63,32 @@ export function RaceScreen({ durationMs, elapsedMs, progress, onDone, disabled }
     return undefined
   }, [updateRunnerBounds])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => setViewportHeight(resolveViewportHeight())
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const raceMinHeight = Math.min(viewportHeight, 900)
+  const trackMinHeight = clamp(viewportHeight * 0.6, 320, 640)
+  const trackHeight = clamp(trackMinHeight * 0.6, 220, 460)
+  const trackMarginTop = clamp(viewportHeight * 0.06, 24, 200)
+
+  const raceScreenStyle: CSSProperties = { minHeight: `${raceMinHeight}px` }
+  const trackAreaStyle: CSSProperties = { minHeight: `${trackMinHeight}px` }
+  const trackStyle: CSSProperties = { marginTop: `${trackMarginTop}px`, height: `${trackHeight}px` }
+
   return (
-    <div className="screen race-screen">
+    <div className="screen race-screen" data-testid="race-screen" style={raceScreenStyle}>
       <Hud durationMs={durationMs} elapsedMs={elapsedMs} progress={progress} />
-      <div className="track-area" role="presentation">
+      <div className="track-area" role="presentation" data-testid="track-area" style={trackAreaStyle}>
         <div className="sky" aria-hidden>
           <div className="cloud cloud-one" style={{ transform: `translateX(${progress * 20}%)` }} />
           <div className="cloud cloud-two" style={{ transform: `translateX(${progress * 35}%)` }} />
           <div className="cloud cloud-three" style={{ transform: `translateX(${progress * 10}%)` }} />
         </div>
-        <div className="track" ref={trackRef}>
+        <div className="track" ref={trackRef} style={trackStyle}>
           <div className="track-markings" aria-hidden />
           <div
             className="runner"
