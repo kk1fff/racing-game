@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { SetupScreen } from './SetupScreen'
 
 function renderSetup(overrides: Partial<Parameters<typeof SetupScreen>[0]> = {}) {
@@ -15,7 +16,21 @@ function renderSetup(overrides: Partial<Parameters<typeof SetupScreen>[0]> = {})
     ...overrides,
   }
 
-  render(<SetupScreen {...props} />)
+  function Wrapper() {
+    const [value, setValue] = useState(props.minutesInput)
+    return (
+      <SetupScreen
+        {...props}
+        minutesInput={value}
+        onMinutesChange={(next) => {
+          setValue(next)
+          props.onMinutesChange(next)
+        }}
+      />
+    )
+  }
+
+  render(<Wrapper />)
   return props
 }
 
